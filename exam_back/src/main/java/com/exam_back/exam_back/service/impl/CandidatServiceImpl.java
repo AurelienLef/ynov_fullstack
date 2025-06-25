@@ -31,6 +31,7 @@ public class CandidatServiceImpl implements CandidatService {
     @Override
     public Candidat update(Long id, Candidat entity) {
         if (candidatRepository.findById(id).isPresent()) {
+            entity.setId(id);
             return candidatRepository.save(entity);
         }
         throw new IllegalArgumentException("Candidat not found") ;
