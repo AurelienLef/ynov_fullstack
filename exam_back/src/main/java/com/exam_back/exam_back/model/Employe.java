@@ -1,6 +1,6 @@
 package com.exam_back.exam_back.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -30,10 +30,11 @@ public class Employe {
 
 
     @OneToMany(mappedBy = "employe", fetch = FetchType.EAGER,  cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnoreProperties("employe")
     private Set<Absence> absences = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "employe", fetch = FetchType.EAGER,  cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnoreProperties("employe")
     private Set<Conges> conges = new HashSet<>();
 
     public Employe() {}

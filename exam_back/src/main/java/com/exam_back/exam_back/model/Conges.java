@@ -1,5 +1,6 @@
 package com.exam_back.exam_back.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class Conges {
 
     @ManyToOne
     @JoinColumn(name = "employe_id", nullable = true)
+    @JsonIgnoreProperties("conges")
     private Employe employe;
 
     public Long getId() {

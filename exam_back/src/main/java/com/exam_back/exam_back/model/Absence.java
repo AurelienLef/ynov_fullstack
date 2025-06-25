@@ -1,6 +1,6 @@
 package com.exam_back.exam_back.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -17,6 +17,7 @@ public class Absence {
 
     @ManyToOne
     @JoinColumn(name="employe_id", nullable = false)
+    @JsonIgnoreProperties("absences")
     private Employe employe;
 
     public Absence() {}
