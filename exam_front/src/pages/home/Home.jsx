@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import EmployeService from '../services/EmployeService';
-import CandidatService from '../services/CandidatService';
+import EmployeService from '../../services/EmployeService';
+import CandidatService from '../../services/CandidatService';
 import './Home.css';
 
 function Home() {

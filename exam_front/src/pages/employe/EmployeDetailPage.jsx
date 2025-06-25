@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import EmployeService from '../services/EmployeService';
-import AbsenceService from '../services/AbsenceService';
-import CongesService from '../services/CongesService';
+import EmployeService from '../../services/EmployeService';
+import AbsenceService from '../../services/AbsenceService';
+import CongesService from '../../services/CongesService';
 import './EmployeDetailPage.css';
 
 function EmployeDetailPage() {
@@ -34,7 +34,7 @@ function EmployeDetailPage() {
     const fetchAbsences = async () => {
       try {
         const data = await AbsenceService.getAbsencesByEmployeId(id);
-        setAbsences(data);
+        setAbsences(data || []);
       } catch (err) {
         console.error("Erreur lors du chargement des absences:", err);
       }
@@ -43,7 +43,7 @@ function EmployeDetailPage() {
     const fetchConges = async () => {
       try {
         const data = await CongesService.getCongesByEmployeId(id);
-        setConges(data);
+        setConges(data || []);
       } catch (err) {
         console.error("Erreur lors du chargement des congés:", err);
       }
@@ -82,6 +82,56 @@ function EmployeDetailPage() {
 
   const toggleConges = () => {
     setShowConges(!showConges);
+  };
+
+  const handleEditAbsence = (absenceId) => {
+    navigate(`/absences/edit/${absenceId}?employeId=${id}`);
+  };
+
+  const handleDeleteAbsence = async (absenceId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/absences/${absenceId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        const errorText = await response.text();
+        alert(`Erreur ${response.status}: ${errorText}`);
+      }
+    } catch (err) {
+      console.error("Erreur lors de la suppression:", err);
+      alert("Erreur lors de la suppression: " + err.message);
+    }
+  };
+
+  const handleEditConges = (congeId) => {
+    navigate(`/conges/edit/${congeId}?employeId=${id}`);
+  };
+
+  const handleDeleteConges = async (congeId) => {
+      try {
+        const response = await fetch(`http://localhost:8080/conges/${congeId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const errorText = await response.text();
+          alert(`Erreur ${response.status}: ${errorText}`);
+        }
+      } catch (err) {
+        console.error("Erreur lors de la suppression:", err);
+        alert("Erreur lors de la suppression: " + err.message);
+      }
   };
 
   return (
@@ -179,12 +229,21 @@ function EmployeDetailPage() {
                       <thead>
                         <tr>
                           <th>Date d'absence</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {absences.map(absence => (
                           <tr key={absence.id}>
                             <td>{formatDate(absence.date)}</td>
+                            <td className="actions-cell">
+                              <button onClick={() => handleEditAbsence(absence.id)} className="btn-action">
+                                Modifier
+                              </button>
+                              <button onClick={() => handleDeleteAbsence(absence.id)} className="btn-action btn-delete">
+                                Supprimer
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -216,6 +275,7 @@ function EmployeDetailPage() {
                         <tr>
                           <th>Date de début</th>
                           <th>Date de fin</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -223,6 +283,14 @@ function EmployeDetailPage() {
                           <tr key={conge.id}>
                             <td>{formatDate(conge.debut)}</td>
                             <td>{formatDate(conge.fin)}</td>
+                            <td className="actions-cell">
+                              <button onClick={() => handleEditConges(conge.id)} className="btn-action">
+                                Modifier
+                              </button>
+                              <button onClick={() => handleDeleteConges(conge.id)} className="btn-action btn-delete">
+                                Supprimer
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>

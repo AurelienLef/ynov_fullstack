@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import CongesService from '../services/CongesService';
-import EmployeService from '../services/EmployeService';
+import CongesService from '../../services/CongesService';
+import EmployeService from '../../services/EmployeService';
 import './CongesFormPage.css';
 
 function CongesFormPage() {
@@ -77,7 +77,11 @@ function CongesFormPage() {
         delete formattedValues.employeId;
         
         if (isEditMode) {
-          await CongesService.updateConges(id, formattedValues);
+          const updateData = {
+            ...formattedValues,
+            id: parseInt(id)
+          };
+          await CongesService.updateConges(id, updateData);
         } else {
           await CongesService.createConges(formattedValues);
         }

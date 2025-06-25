@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import CandidatService from '../services/CandidatService';
-import '../components/CandidatForm.css';
-import './CandidatFormPage.css';
+import EmployeService from '../../services/EmployeService';
+import '../../components/CandidatForm.css';
+import './EmployeFormPage.css';
 
-function CandidatFormPage() {
+function EmployeFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [candidat, setCandidat] = useState(null);
+  const [employe, setEmploye] = useState(null);
   const isEditMode = !!id;
 
   const validationSchema = Yup.object({
@@ -21,9 +21,10 @@ function CandidatFormPage() {
     num_id: Yup.string().required('Le numéro d\'identification est requis'),
     naissance: Yup.date().required('La date de naissance est requise'),
     tel: Yup.string().required('Le numéro de téléphone est requis'),
-    domaine: Yup.string().required('Le domaine est requis'),
-    note: Yup.string(),
-    entretien: Yup.date().nullable(),
+    poste: Yup.string().required('Le poste est requis'),
+    salaire: Yup.string().required('Le salaire est requis'),
+    debut: Yup.date().required('La date de début est requise'),
+    fin: Yup.date().nullable(),
     observation: Yup.string()
   });
 
@@ -35,9 +36,10 @@ function CandidatFormPage() {
       num_id: '',
       naissance: '',
       tel: '',
-      domaine: '',
-      note: '',
-      entretien: '',
+      poste: '',
+      salaire: '',
+      debut: '',
+      fin: '',
       observation: ''
     },
     validationSchema,
@@ -47,20 +49,17 @@ function CandidatFormPage() {
         const formattedValues = {
           ...values,
           naissance: values.naissance ? new Date(values.naissance).toISOString() : null,
-          entretien: values.entretien ? new Date(values.entretien).toISOString() : null
+          debut: values.debut ? new Date(values.debut).toISOString() : null,
+          fin: values.fin ? new Date(values.fin).toISOString() : null
         };
         
         if (isEditMode) {
-          console.log("Mise à jour du candidat avec ID:", id);
-          console.log("Données envoyées:", { id, ...formattedValues });
-          await CandidatService.updateCandidat(id, formattedValues);
+          await EmployeService.updateEmploye(id, formattedValues);
         } else {
-          console.log("Création d'un nouveau candidat");
-          console.log("Données envoyées:", formattedValues);
-          await CandidatService.createCandidat(formattedValues);
+          await EmployeService.createEmploye(formattedValues);
         }
         
-        navigate('/candidats');
+        navigate('/employes');
       } catch (err) {
         console.error("Erreur lors de l'opération:", err);
         setError("Une erreur est survenue. Veuillez réessayer.");
@@ -71,40 +70,41 @@ function CandidatFormPage() {
   });
 
   useEffect(() => {
-    const fetchCandidat = async () => {
+    const fetchEmploye = async () => {
       if (isEditMode) {
         try {
           setLoading(true);
-          const data = await CandidatService.getCandidatById(id);
-          setCandidat(data);
+          const data = await EmployeService.getEmployeById(id);
+          setEmploye(data);
           
           const formattedData = {
             ...data,
             naissance: data.naissance ? new Date(data.naissance).toISOString().split('T')[0] : '',
-            entretien: data.entretien ? new Date(data.entretien).toISOString().split('T')[0] : ''
+            debut: data.debut ? new Date(data.debut).toISOString().split('T')[0] : '',
+            fin: data.fin ? new Date(data.fin).toISOString().split('T')[0] : ''
           };
           
           formik.setValues(formattedData);
         } catch (err) {
-          console.error("Erreur lors du chargement du candidat:", err);
-          setError("Impossible de charger les données du candidat.");
+          console.error("Erreur lors du chargement de l'employé:", err);
+          setError("Impossible de charger les données de l'employé.");
         } finally {
           setLoading(false);
         }
       }
     };
 
-    fetchCandidat();
+    fetchEmploye();
   }, [id, isEditMode]);
 
   const handleCancel = () => {
-    navigate('/candidats');
+    navigate('/employes');
   };
 
   return (
-    <div className="candidat-form-page">
+    <div className="employe-form-page">
       <div className="form-header">
-        <h1>{isEditMode ? 'Modifier le candidat' : 'Ajouter un candidat'}</h1>
+        <h1>{isEditMode ? 'Modifier l\'employé' : 'Ajouter un employé'}</h1>
         <button onClick={handleCancel} className="btn btn-secondary">
           Retour à la liste
         </button>
@@ -212,41 +212,63 @@ function CandidatFormPage() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="domaine">Domaine d'expertise *</label>
+              <label htmlFor="poste">Poste *</label>
               <input
-                id="domaine"
-                name="domaine"
+                id="poste"
+                name="poste"
                 type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.domaine}
+                value={formik.values.poste}
               />
-              {formik.touched.domaine && formik.errors.domaine ? (
-                <div className="error">{formik.errors.domaine}</div>
+              {formik.touched.poste && formik.errors.poste ? (
+                <div className="error">{formik.errors.poste}</div>
               ) : null}
             </div>
 
             <div className="form-group">
-              <label htmlFor="note">Note</label>
-              <textarea
-                id="note"
-                name="note"
+              <label htmlFor="salaire">Salaire *</label>
+              <input
+                id="salaire"
+                name="salaire"
+                type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.note}
+                value={formik.values.salaire}
               />
+              {formik.touched.salaire && formik.errors.salaire ? (
+                <div className="error">{formik.errors.salaire}</div>
+              ) : null}
             </div>
 
             <div className="form-group">
-              <label htmlFor="entretien">Date d'entretien</label>
+              <label htmlFor="debut">Date de début *</label>
               <input
-                id="entretien"
-                name="entretien"
+                id="debut"
+                name="debut"
                 type="date"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.entretien}
+                value={formik.values.debut}
               />
+              {formik.touched.debut && formik.errors.debut ? (
+                <div className="error">{formik.errors.debut}</div>
+              ) : null}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="fin">Date de fin *</label>
+              <input
+                id="fin"
+                name="fin"
+                type="date"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.fin}
+              />
+              {formik.touched.fin && formik.errors.fin ? (
+                <div className="error">{formik.errors.fin}</div>
+              ) : null}
             </div>
 
             <div className="form-group">
@@ -254,26 +276,22 @@ function CandidatFormPage() {
               <textarea
                 id="observation"
                 name="observation"
+                rows="4"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.observation}
-              />
+              ></textarea>
+              {formik.touched.observation && formik.errors.observation ? (
+                <div className="error">{formik.errors.observation}</div>
+              ) : null}
             </div>
 
             <div className="form-buttons">
-              <button 
-                type="button" 
-                className="btn btn-secondary" 
-                onClick={handleCancel}
-              >
-                Annuler
+              <button type="submit" className="btn-submit" disabled={formik.isSubmitting || loading}>
+                {formik.isSubmitting ? 'Enregistrement...' : isEditMode ? 'Mettre à jour' : 'Ajouter'}
               </button>
-              <button 
-                type="submit" 
-                className="btn btn-primary"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting ? 'Enregistrement...' : isEditMode ? 'Mettre à jour' : 'Enregistrer'}
+              <button type="button" className="btn-cancel" onClick={handleCancel}>
+                Annuler
               </button>
             </div>
           </form>
@@ -283,4 +301,4 @@ function CandidatFormPage() {
   );
 }
 
-export default CandidatFormPage;
+export default EmployeFormPage;

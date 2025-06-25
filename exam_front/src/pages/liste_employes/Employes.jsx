@@ -1,76 +1,82 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CandidatService from '../services/CandidatService';
-import '../components/CandidatList.css';
+import EmployeService from '../../services/EmployeService';
+import '../../components/CandidatList.css';
 
-function Candidats() {
+function Employes() {
   const navigate = useNavigate();
-  const [candidats, setCandidats] = useState([]);
+  const [employes, setEmployes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCandidats();
+    fetchEmployes();
   }, []);
 
-  const fetchCandidats = async () => {
+  const fetchEmployes = async () => {
     setLoading(true);
     try {
-      const data = await CandidatService.getAllCandidats();
-      setCandidats(data);
+      const data = await EmployeService.getAllEmployes();
+      setEmployes(data);
       setError(null);
     } catch (err) {
-      console.error("Erreur lors du chargement des candidats:", err);
-      setError("Impossible de charger les candidats. Veuillez réessayer plus tard.");
+      console.error("Erreur lors du chargement des employés:", err);
+      setError("Impossible de charger les employés. Veuillez réessayer plus tard.");
     } finally {
       setLoading(false);
     }
   };
 
-  const goToAddCandidat = () => {
-    navigate('/candidats/new');
+  const goToAddEmploye = () => {
+    navigate('/employes/new');
   };
 
-  const goToViewCandidat = (id) => {
-    navigate(`/candidats/view/${id}`);
+  const goToViewEmploye = (id) => {
+    navigate(`/employes/view/${id}`);
   };
 
-  const goToEditCandidat = (id) => {
-    navigate(`/candidats/edit/${id}`);
+  const goToEditEmploye = (id) => {
+    navigate(`/employes/edit/${id}`);
   };
 
   const handleDelete = async (id) => {
     try {
-      await CandidatService.deleteCandidat(id);
-      fetchCandidats();
+      await EmployeService.deleteEmploye(id);
+      fetchEmployes();
     } catch (err) {
       console.error("Erreur lors de la suppression:", err);
-      setError("Erreur lors de la suppression du candidat.");
+      setError("Erreur lors de la suppression de l'employé.");
     }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR');
   };
 
   return (
     <div className="candidats-container">
       <div className="candidats-header">
-        <h1>Gestion des Candidats</h1>
-        <button className="add-candidat-btn" onClick={goToAddCandidat}>
+        <h1>Gestion des Employés</h1>
+        <button className="add-candidat-btn" onClick={goToAddEmploye}>
           <span className="icon">+</span>
-          Ajouter un candidat
+          Ajouter un employé
         </button>
       </div>
 
       {loading ? (
         <div className="loading-state">
-          <p>Chargement des candidats...</p>
+          <p>Chargement des employés...</p>
         </div>
       ) : error ? (
         <div className="error-state">
           <p>{error}</p>
         </div>
-      ) : candidats.length === 0 ? (
+      ) : employes.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">📋</div>
-          <p>Aucun candidat trouvé. Ajoutez-en un nouveau !</p>
+          <p>Aucun employé trouvé. Ajoutez-en un nouveau !</p>
         </div>
       ) : (
         <div className="candidats-table-container">
@@ -80,36 +86,36 @@ function Candidats() {
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Téléphone</th>
-                <th>Domaine</th>
+                <th>Poste</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {candidats.map(candidat => (
-                <tr key={candidat.id}>
-                  <td>{candidat.nom}</td>
-                  <td>{candidat.email}</td>
-                  <td>{candidat.tel}</td>
-                  <td>{candidat.domaine}</td>
+              {employes.map(employe => (
+                <tr key={employe.id}>
+                  <td>{employe.nom}</td>
+                  <td>{employe.email}</td>
+                  <td>{employe.tel}</td>
+                  <td>{employe.poste}</td>
                   <td>
                     <div className="action-column">
                       <button 
                         className="action-btn view-btn" 
-                        onClick={() => goToViewCandidat(candidat.id)}
+                        onClick={() => goToViewEmploye(employe.id)}
                         title="Voir les détails"
                       >
                         👁️
                       </button>
                       <button 
                         className="action-btn edit-btn" 
-                        onClick={() => goToEditCandidat(candidat.id)}
+                        onClick={() => goToEditEmploye(employe.id)}
                         title="Modifier"
                       >
                         ✏️
                       </button>
                       <button 
                         className="action-btn delete-btn" 
-                        onClick={() => handleDelete(candidat.id)}
+                        onClick={() => handleDelete(employe.id)}
                         title="Supprimer"
                       >
                         🗑️
@@ -126,4 +132,4 @@ function Candidats() {
   );
 }
 
-export default Candidats;
+export default Employes;

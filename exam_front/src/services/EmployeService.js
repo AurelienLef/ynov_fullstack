@@ -35,8 +35,6 @@ const EmployeService = {
 
   updateEmploye: async (id, employeData) => {
     try {
-      console.log(`Mise à jour de l'employé ID: ${id}`);
-      console.log('Données envoyées:', employeData);
       const response = await axios.put(`${API_URL}/employes/${id}`, employeData);
       return response.data;
     } catch (error) {

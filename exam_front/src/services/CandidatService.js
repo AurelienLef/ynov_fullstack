@@ -35,8 +35,6 @@ const CandidatService = {
 
   updateCandidat: async (id, candidatData) => {
     try {
-      console.log(`Mise à jour du candidat ID: ${id}`);
-      console.log('Données envoyées:', candidatData);
       const response = await axios.put(`${API_URL}/candidats/${id}`, candidatData);
       return response.data;
     } catch (error) {

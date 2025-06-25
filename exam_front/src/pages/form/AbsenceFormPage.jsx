@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import AbsenceService from '../services/AbsenceService';
-import EmployeService from '../services/EmployeService';
+import AbsenceService from '../../services/AbsenceService';
+import EmployeService from '../../services/EmployeService';
 import './AbsenceFormPage.css';
 
 function AbsenceFormPage() {
@@ -73,7 +73,11 @@ function AbsenceFormPage() {
         delete formattedValues.employeId;
         
         if (isEditMode) {
-          await AbsenceService.updateAbsence(id, formattedValues);
+          const updateData = {
+            ...formattedValues,
+            id: parseInt(id)
+          };
+          await AbsenceService.updateAbsence(id, updateData);
         } else {
           await AbsenceService.createAbsence(formattedValues);
         }

@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './pages/Layout';
-import Home from './pages/Home';
-import Employes from './pages/Employes';
-import EmployeFormPage from './pages/EmployeFormPage';
-import EmployeDetailPage from './pages/EmployeDetailPage';
-import Candidats from './pages/Candidats';
-import CandidatFormPage from './pages/CandidatFormPage';
-import CandidatDetailPage from './pages/CandidatDetailPage';
-import AbsenceFormPage from './pages/AbsenceFormPage';
-import CongesFormPage from './pages/CongesFormPage';
+import Home from './pages/home/Home';
+import Employes from './pages/liste_employes/Employes';
+import EmployeFormPage from './pages/form/EmployeFormPage';
+import EmployeDetailPage from './pages/employe/EmployeDetailPage';
+import Candidats from './pages/liste_candidats/Candidats';
+import CandidatFormPage from './pages/form/CandidatFormPage';
+import CandidatDetailPage from './pages/candidat/CandidatDetailPage';
+import AbsenceFormPage from './pages/form/AbsenceFormPage';
+import CongesFormPage from './pages/form/CongesFormPage';
 import { ToastProvider } from './components/Toast';
 import './App.css';
 

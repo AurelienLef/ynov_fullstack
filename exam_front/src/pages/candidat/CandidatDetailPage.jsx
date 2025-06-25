@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import CandidatService from '../services/CandidatService';
+import CandidatService from '../../services/CandidatService';
 import './CandidatDetailPage.css';
 
 function CandidatDetailPage() {
